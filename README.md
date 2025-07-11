@@ -10,21 +10,14 @@ TaskyMaster is a simple Flutter task management app that includes:
 # Screens
 
 - Login Screen:
-  login interface with input fields for email and password
-  A good UI structure and layout for the login screen
+  login interface with input fields for email and password    A good UI structure and layout for the login screen
 
 - Main Menu:
   Choose between To-Do List and Counter
 
 - To-Do List:
- Add tasks (plus button)
- Delete tasks
- Check tasks
- It uses shared_preference for storing the tasks.
+ Add tasks (plus button)   Delete tasks   Check tasks  It uses shared_preference for storing the tasks.
   
 - Counter
-Increment values
-Decrement values
-Save the values using shared_preference  
-Reset or delete the saved values
+Increment values  Decrement values  Save the values using shared_preference    Reset or delete the saved values
 
