@@ -1,16 +1,29 @@
-# taskproject
+# TaskMaster App
 
-A new Flutter project.
+TaskyMaster is a simple Flutter task management app that includes:
 
-## Getting Started
+- A Login interface that provide UI interface, its just a frontend.
+- A Home page that will give you option to choose.
+- A To-Do List with persistent storage using 'shared_preferences'
+- A Counter feature with Save and Reset and for storage its also using 'shared_preference'
 
-This project is a starting point for a Flutter application.
+# Screens
 
-A few resources to get you started if this is your first Flutter project:
+- Login Screen
+  login interface with input fields for email and password
+  A good UI structure and layout for the login screen
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- Main Menu
+  Choose between To-Do List and Counter
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- To-Do List
+ Add tasks (plus button)
+ Delete tasks
+ Check tasks
+ It uses shared_preference for storing the tasks.
+  
+- Counter
+Increment values
+Decrement values
+Save the values using shared_preference  
+Reset or delete the saved values

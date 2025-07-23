@@ -1,7 +1,19 @@
 import 'package:flutter/material.dart';
-import 'Home.dart' ;
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'firebase_options.dart';
+import 'Home.dart';
+import 'Signup.dart';
+import 'ForgotPassword.dart';
 
-void main() => runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  runApp(const MyApp());
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -15,8 +27,62 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  bool isLoading = false;
+
+  void loginUser() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      await _auth.signInWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+      );
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => HomeScreen()),
+      );
+    } on FirebaseAuthException catch (e) {
+      String message = "Login failed";
+      if (e.code == 'user-not-found') {
+        message = "No user found for that email.";
+      } else if (e.code == 'wrong-password') {
+        message = "Wrong password provided.";
+      }
+
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: const Text("Error"),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("OK"),
+            )
+          ],
+        ),
+      );
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,14 +138,21 @@ class LoginScreen extends StatelessWidget {
                         ),
                         child: Column(
                           children: [
-                            _buildInputField("Email", false),
+                            _buildInputField("Email", emailController, false),
                             const SizedBox(height: 10),
-                            _buildInputField("Password", true),
+                            _buildInputField("Password", passwordController, true),
                             const SizedBox(height: 30),
                             Align(
                               alignment: Alignment.centerRight,
                               child: TextButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => ForgotPasswordScreen(),
+                                    ),
+                                  );
+                                },
                                 child: const Text(
                                   "Forgot Password?",
                                   style: TextStyle(color: Colors.grey),
@@ -88,14 +161,7 @@ class LoginScreen extends StatelessWidget {
                             ),
                             const SizedBox(height: 30),
                             GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => HomeScreen(),
-                                  ),
-                                );
-                              },
+                              onTap: loginUser,
                               child: Container(
                                 height: 50,
                                 margin: const EdgeInsets.symmetric(horizontal: 50),
@@ -103,8 +169,10 @@ class LoginScreen extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(50),
                                   color: Colors.red.shade900,
                                 ),
-                                child: const Center(
-                                  child: Text(
+                                child: Center(
+                                  child: isLoading
+                                      ? const CircularProgressIndicator(color: Colors.white)
+                                      : const Text(
                                     "Login",
                                     style: TextStyle(
                                       color: Colors.white,
@@ -113,6 +181,16 @@ class LoginScreen extends StatelessWidget {
                                   ),
                                 ),
                               ),
+                            ),
+                            const SizedBox(height: 20),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (_) => SignupScreen()),
+                                );
+                              },
+                              child: const Text("Don't have an account? Sign Up"),
                             ),
                           ],
                         ),
@@ -129,13 +207,14 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildInputField(String hint, bool obscure) {
+  Widget _buildInputField(String hint, TextEditingController controller, bool obscure) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 8),
       decoration: const BoxDecoration(
         border: Border(bottom: BorderSide(color: Colors.grey)),
       ),
       child: TextField(
+        controller: controller,
         obscureText: obscure,
         decoration: InputDecoration(
           hintText: hint,

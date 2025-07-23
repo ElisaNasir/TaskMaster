@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'Counter.dart';
 import 'List.dart';
+import 'User_list.dart';
+import 'ProfileScreen.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -37,6 +39,8 @@ class HomeScreen extends StatelessWidget {
                 _buildButton(context, 'Counter', CounterApp(), Colors.redAccent),
                 SizedBox(height: 20),
                 _buildButton(context, 'To-Do List', TodoListApp(), Colors.orangeAccent),
+                SizedBox(height: 20),
+                _buildButton(context, 'View API Users', UserListScreen(), Colors.redAccent),
               ],
             ),
           ),
